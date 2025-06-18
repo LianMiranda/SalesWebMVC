@@ -22,7 +22,6 @@ namespace SalesWebMVC
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
@@ -30,14 +29,16 @@ namespace SalesWebMVC
             services.AddDbContext<SalesWebMVCContext>(options =>
                 options.UseMySql(Configuration.GetConnectionString("SalesWebMVCContext"),
                     builder => builder.MigrationsAssembly("SalesWebMVC")));
+
+            services.AddScoped<SeedingService>();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, SeedingService seedingService)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                seedingService.Seed();
             }
             else
             {
