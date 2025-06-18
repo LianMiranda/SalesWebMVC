@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Mvc;
 using SalesWebMVC.Models;
 using SalesWebMVC.Models.ViewModel;
@@ -30,12 +31,37 @@ namespace SalesWebMVC.Controllers
             return View(viewModel);
         }
         
+        public IActionResult Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            
+            var obj = _sellerService.FindById(id.Value);
+            if (obj == null)
+            {
+                return NotFound();
+            }
+            
+            return View(obj);
+        }
+        
         // CREATE
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Seller seller)
         {
             _sellerService.Save(seller);
+            return RedirectToAction(nameof(Index));
+        }
+        
+        //DELETE
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(int id)
+        {
+            _sellerService.Delete(id);
             return RedirectToAction(nameof(Index));
         }
     }
